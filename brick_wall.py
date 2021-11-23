@@ -49,7 +49,7 @@ def draw_brick_wall_offset(rows, cols, brick_width, brick_height, mortar_width):
 
 
 def draw_brick_wall_special(rows, cols, brick_width, brick_height, mortar_width):
-    ...    
+    ... 
 
 
 def draw_brick_wall(rows, cols, brick_width, brick_height, mortar_width):
