@@ -1,6 +1,8 @@
 # schoolwork
 Repo to hold school projects
 
+Needs a words.txt file in the same directory with words separated on each line. You can find one [here.](https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english.txt)
+
 # Projects
 
 ### [Hangman](hangman.py) 
