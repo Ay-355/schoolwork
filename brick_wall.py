@@ -77,6 +77,7 @@ def draw_brick_wall(rows, cols, brick_width, brick_height, mortar_width):
             draw_rect(x * (brick_width + mortar_width), y * (brick_height + mortar_width), brick_width, brick_height)
 
 
+draw_brick_wall(10, 5, 50, 25, 5)
 # draw_brick_wall_offset(10, 5, 50, 25, 5)
-draw_brick_wall_special(8, 8, 15, 5)
+# draw_brick_wall_special(10, 10, 25, 5)
 turtle.done()
