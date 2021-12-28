@@ -18,6 +18,7 @@ Builds a brick wall using python's turtle library.
 
 You can change how big the bricks are, how many of them are made, and the mortar width.
 
-There are two functions:
+There are three functions:
  - Regular brick wall
  - Wall with offset between rows of bricks
+ - Special brick wall with bricks in different rotations
