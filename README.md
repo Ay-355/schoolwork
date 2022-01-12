@@ -13,6 +13,7 @@ Needs a words.txt file in the same directory with words separated on each line. 
 ### [Caesar Cipher](caesar_cipher.py) 
 Encrypt and decrypt a phrase with a certain shift in the alphabet.
 
+
 ### [Brick Wall](brick_wall.py) 
 Builds a brick wall using python's turtle library.
 
@@ -22,3 +23,9 @@ There are three functions:
  - Regular brick wall
  - Wall with offset between rows of bricks
  - Special brick wall with bricks in different rotations
+
+
+### [Tic Tac Toe](ttt.py)
+Tic-Tac-Toe using the turtle library.
+
+Two player - square and circle.
