@@ -15,6 +15,10 @@ def draw_board():
     box.down()
     box.forward(6)
     box.up()
+    box.goto(0,6)
+    box.down()
+    box.forward(6)
+    box.up()
     box.left(90)
     box.goto(2, 0)
     box.down()
@@ -27,7 +31,6 @@ def draw_board():
 
 
 def check_win(board: list):
-
     # horizontal
     for x in board:
         if sum(x) == 3:
@@ -63,10 +66,20 @@ def check_win(board: list):
         return "tie"
 
 
+def write_text(content: str, text: turtle.Turtle): 
+    text.undo()
+    text.speed(0)
+    text.hideturtle()
+    text.up()
+    text.goto(3, 6.25)
+    text.write(content, align="center", font=("Arial", 25, "normal"))
+    
+
 # -1 = circle, 1 = square
-def stamp_shape(x: float, y: float, pointer: turtle.Turtle):
+def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle):
     # OOP is so much better than globals
-    global turn, board
+    global turn, board, won
+    if won is True: return
     pointer.shape("square" if turn == 1 else "circle")
     xr, yr = None, None
     if 0 < x < 2:
@@ -91,10 +104,11 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle):
 
     # dont count if they dont hit inside square
     if xr == None or yr == None:
-        return
+        write_text("Please hit inside a spot", text)
+        return 
 
     if board[xr][yr] != 0:
-        print("SPOT ALREADY USED")
+        write_text("SPOT ALREADY USED", text)
         return
     else:
         board[xr][yr] = turn
@@ -102,16 +116,27 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle):
     pointer.goto(xa, ya)
     pointer.stamp()
     turn = 1 if turn == -1 else -1
+    write_text(f"It is {'square' if turn == 1 else 'circle'}'s turn", text)
+
     if winner := check_win(board):
-        print(winner)
+        if winner != "tie": 
+            write_text(winner.capitalize() + " wins the game.", text)
+        else: 
+            write_text("It is a tie", text)
+        turtle.title(winner.capitalize())
+        won = True
 
 
 def main():
-    global turn, board
+    global turn, board, won
     turn = 1
+    won = False
+    text = turtle.Turtle()
     screen = turtle.Screen()
     screen.setup(600, 600)
-    screen.setworldcoordinates(0, 0, 6, 6)
+    screen.setworldcoordinates(0, 0, 6, 7)
+    screen.title("Tic Tac Toe")
+
     board = [
         [0, 0, 0],
         [0, 0, 0],
@@ -129,8 +154,10 @@ def main():
 
     draw_board()
 
-    screen.onclick(lambda x, y: stamp_shape(x, y, pointer))
+    screen.onclick(lambda x, y: stamp_shape(x, y, pointer, text))
     screen.onkey(main, "n")
+    write_text(f"It is {'square' if turn == 1 else 'circle'}'s turn", text)
+
     screen.listen()
     screen.mainloop()
 
