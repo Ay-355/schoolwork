@@ -101,16 +101,18 @@ def minimax(board: list, depth: int, turn: int):
 
 def ai_move(board: list, pointer: turtle.Turtle, text: turtle.Turtle):
     global turn, won
-    pointer.shape("circle")
     depth = len(empty_spots(board))
-    a = board
-    move = minimax(a, depth, -1)
-    y, x = move[0], move[1]
+    move = minimax(board, depth, -1)
+
+    y, x, _ = move
     board[y][x] = turn
     xmap = {0: 1, 1: 3, 2: 5}
     ymap = {0: 5, 1: 3, 2: 1}
+
+    pointer.shape("circle")
     pointer.goto(xmap[x], ymap[y])
     pointer.stamp()
+
     turn *= -1
     write_text("It is your turn.", text)
 
@@ -125,7 +127,6 @@ def ai_move(board: list, pointer: turtle.Turtle, text: turtle.Turtle):
 
 # 1 = square, -1 = circle
 def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle, mode: str):
-    # OOP is so much better than globals
     global turn, board, won
     if won is True:
         return
@@ -177,7 +178,7 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle,
             write_text("It is a tie.", text)
         turtle.title(winner)
         won = True
-    else:
+    elif mode == "u":
         write_text("AI is thinking.", text)
         ai_move(board, pointer, text)
 
@@ -208,14 +209,16 @@ def main():
     pointer.speed(0)
 
     draw_board()
-    mode = "u"
-    # mode = input("[N]ormal 2v2 or [U]nbeatable AI? > ").lower()
+    write_text("Normal or Unbeatable AI?", text)
+
+    mode = screen.textinput("Mode", "[N]ormal 2v2 or [U]nbeatable AI? Default: Normal")
     if mode == "n":
         write_text(f"It is {'square' if turn == 1 else 'circle'}'s turn.", text)
     elif mode == "u":
         write_text("It is your turn.", text)
     else:
-        print("Could not recognize input, defaulting to 2v2")
+        mode = "n"
+        write_text(f"It is {'square' if turn == 1 else 'circle'}'s turn.", text)
 
     screen.onclick(lambda x, y: stamp_shape(x, y, pointer, text, mode))
     screen.onkey(main, "n")
