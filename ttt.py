@@ -114,10 +114,8 @@ def ai_move(board: list, pointer: turtle.Turtle, text: turtle.Turtle):
     write_text("It is your turn.", text)
 
     if winner := check_win(board):
-        if winner != "Tie":
-            write_text(f"{winner} wins the game.", text)
-        else:
-            write_text("It is a tie.", text)
+        m = {"Square": "Wow, you won the game somehow", "Circle": "AI wins the game.", "Tie": "It's a tie"}
+        write_text(m[winner], text)
         turtle.title(winner)
         won = True
 
@@ -199,10 +197,13 @@ def load(pointer: turtle.Turtle, text: turtle.Turtle):
         turn = 1
     else:
         turn = -1
-    write_text("Loaded game.", text)
+    write_text(f"Loaded game. {'Square' if turn == 1 else 'Circle'}'s turn.", text)
+    
 
 
 def save(board: list, text: turtle.Turtle):
+    if check_win(board):
+        return write_text("Can't save game that is over.", text)
     with open("saved_ttt.txt", "w") as f:
         f.write(str(board))
     write_text("Saved game state.", text)
