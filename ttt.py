@@ -177,7 +177,7 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle,
 
 
 def load(pointer: turtle.Turtle, text: turtle.Turtle):
-    global board
+    global board, turn
 
     if not Path("saved_ttt.txt").is_file():
         return write_text("Couldn't find a saved game.", text)
@@ -188,11 +188,17 @@ def load(pointer: turtle.Turtle, text: turtle.Turtle):
     used = [(y, x) for y in range(3) for x in range(3) if board[y][x] != 0]
     xmap = {0: 1, 1: 3, 2: 5}
     ymap = {0: 5, 1: 3, 2: 1}
+    am = 0
 
     for y, x in [_ for _ in used]:
         pointer.shape("square" if board[y][x] == 1 else "circle")
+        am += board[y][x] 
         pointer.goto(xmap[x], ymap[y])
         pointer.stamp()
+    if am <= 0:
+        turn = 1
+    else:
+        turn = -1
     write_text("Loaded game.", text)
 
 
