@@ -1,5 +1,7 @@
 import turtle
+import json
 from math import inf
+from pathlib import Path
 
 
 def draw_board():
@@ -66,28 +68,23 @@ def write_text(content: str, text: turtle.Turtle):
 
 
 def empty_spots(board: list):
-    empty = []
-    for y in range(3):
-        for x in range(3):
-            if board[y][x] == 0:
-                empty.append((y, x))
-    return empty
+    return [(y, x) for y in range(3) for x in range(3) if board[y][x] == 0]
 
 
-def minimax(board: list, depth: int, turn: int):
+def minimax(board: list, spots: int, turn: int):
     if turn == -1:
         best = [-1, -1, inf]
     else:
         best = [-1, -1, -inf]
 
-    if (winner := check_win(board)) or depth == 0:
+    if (winner := check_win(board)) or spots == 0:
         m = {"Square": 1, "Circle": -1, "Tie": 0}
         return [-1, -1, m[winner]]
 
     for c in empty_spots(board):
         y, x = c
         board[y][x] = turn
-        score = minimax(board, depth - 1, -turn)
+        score = minimax(board, spots - 1, -turn)
         board[y][x] = 0
         score[0], score[1] = y, x
         if turn == -1:
@@ -101,8 +98,8 @@ def minimax(board: list, depth: int, turn: int):
 
 def ai_move(board: list, pointer: turtle.Turtle, text: turtle.Turtle):
     global turn, won
-    depth = len(empty_spots(board))
-    move = minimax(board, depth, -1)
+    spots = len(empty_spots(board))
+    move = minimax(board, spots, -1)
 
     y, x, _ = move
     board[y][x] = turn
@@ -135,26 +132,22 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle,
 
     pointer.shape("square" if turn == 1 else "circle")
     xr, yr = None, None
+    xmap = {0: 1, 1: 3, 2: 5}
+    ymap = {0: 5, 1: 3, 2: 1}
 
     if 0 < x < 2:
         xr = 0
-        xa = 1
     elif 2 < x < 4:
         xr = 1
-        xa = 3
     elif 4 < x < 6:
         xr = 2
-        xa = 5
 
     if 0 < y < 2:
         yr = 2
-        ya = 1
     elif 2 < y < 4:
         yr = 1
-        ya = 3
     elif 4 < y < 6:
         yr = 0
-        ya = 5
 
     # don't count if they hit outside square
     if xr is None or yr is None:
@@ -165,7 +158,7 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle,
     else:
         board[yr][xr] = turn
 
-    pointer.goto(xa, ya)
+    pointer.goto(xmap[xr], ymap[yr])
     pointer.stamp()
 
     turn *= -1
@@ -181,6 +174,32 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle,
     elif mode == "u":
         write_text("AI is thinking.", text)
         ai_move(board, pointer, text)
+
+
+def load(pointer: turtle.Turtle, text: turtle.Turtle):
+    global board
+
+    if not Path("saved_ttt.txt").is_file():
+        return write_text("Couldn't find a saved game.", text)
+    with open("saved_ttt.txt") as f:
+        board = json.load(f)
+
+    pointer.clearstamps()
+    used = [(y, x) for y in range(3) for x in range(3) if board[y][x] != 0]
+    xmap = {0: 1, 1: 3, 2: 5}
+    ymap = {0: 5, 1: 3, 2: 1}
+
+    for y, x in [_ for _ in used]:
+        pointer.shape("square" if board[y][x] == 1 else "circle")
+        pointer.goto(xmap[x], ymap[y])
+        pointer.stamp()
+    write_text("Loaded game.", text)
+
+
+def save(board: list, text: turtle.Turtle):
+    with open("saved_ttt.txt", "w") as f:
+        f.write(str(board))
+    write_text("Saved game state.", text)
 
 
 def main():
@@ -222,6 +241,9 @@ def main():
 
     screen.onclick(lambda x, y: stamp_shape(x, y, pointer, text, mode))
     screen.onkey(main, "n")
+
+    screen.onkey(lambda: load(pointer, text), "l")
+    screen.onkey(lambda: save(board, text), "s")
 
     screen.listen()
     screen.mainloop()
