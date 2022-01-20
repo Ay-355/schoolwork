@@ -35,4 +35,4 @@ Two modes:
 Keybinds:  
 <kbd>n</kbd> -> New game.  
 <kbd>s</kbd> -> Save game state.  
-<kbd>l</kbd> -> Load saved game.  
+<kbd>o</kbd> -> Open and load saved game.  

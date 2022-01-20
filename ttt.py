@@ -174,8 +174,10 @@ def stamp_shape(x: float, y: float, pointer: turtle.Turtle, text: turtle.Turtle,
         ai_move(board, pointer, text)
 
 
-def load(pointer: turtle.Turtle, text: turtle.Turtle):
+def load(pointer: turtle.Turtle, text: turtle.Turtle, mode: str):
     global board, turn
+    if mode == "u":
+        return write_text("Can't load game in unbeatable mode.", text)
 
     if not Path("saved_ttt.txt").is_file():
         return write_text("Couldn't find a saved game.", text)
@@ -190,7 +192,7 @@ def load(pointer: turtle.Turtle, text: turtle.Turtle):
 
     for y, x in [_ for _ in used]:
         pointer.shape("square" if board[y][x] == 1 else "circle")
-        am += board[y][x] 
+        am += board[y][x]
         pointer.goto(xmap[x], ymap[y])
         pointer.stamp()
     if am <= 0:
@@ -198,10 +200,11 @@ def load(pointer: turtle.Turtle, text: turtle.Turtle):
     else:
         turn = -1
     write_text(f"Loaded game. {'Square' if turn == 1 else 'Circle'}'s turn.", text)
-    
 
 
-def save(board: list, text: turtle.Turtle):
+def save(board: list, text: turtle.Turtle, mode: str):
+    if mode == "u":
+        return write_text("Can't save game in unbeatable mode.", text)
     if check_win(board):
         return write_text("Can't save game that is over.", text)
     with open("saved_ttt.txt", "w") as f:
@@ -249,8 +252,8 @@ def main():
     screen.onclick(lambda x, y: stamp_shape(x, y, pointer, text, mode))
     screen.onkey(main, "n")
 
-    screen.onkey(lambda: load(pointer, text), "l")
-    screen.onkey(lambda: save(board, text), "s")
+    screen.onkey(lambda: load(pointer, text, mode), "o")
+    screen.onkey(lambda: save(board, text, mode), "s")
 
     screen.listen()
     screen.mainloop()
