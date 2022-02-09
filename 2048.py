@@ -1,4 +1,5 @@
 import turtle
+import random
 
 
 def draw_board(board: list):
@@ -22,29 +23,45 @@ def draw_board(board: list):
     line(3, 0)
 
 
-def move(direction: str):
-    print(direction)
+def move(direction: str, board: list):
+    # if direction in ["u", "d"]:
+    #     for i in range(3):
+    #         for j in range(3):
+    #             if (board[i][j] == board[i + 1][j]) and board[i][j] != 0:
+    #                 ...
+
+    for i in range(3):
+        for j in range(3):
+            if (board[i][j] == board[i][j + 1]) and board[i][j] != 0:
+                print("yes")
+
+
+def setup_board():
+    board = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 2],
+        [0, 0, 0, 2],
+        [0, 0, 0, 0],
+    ]
+    board[random.randint(0, 3)][random.randint(0, 3)] = 2
+    board[random.randint(0, 3)][random.randint(0, 3)] = 2
+    return board
 
 
 def main():
-    board = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-    ]
     screen = turtle.Screen()
     screen.setup(600, 600)
     screen.setworldcoordinates(0, 0, 4, 4)
     screen.title("2048")
     screen.bgcolor("#c0b3a6")
 
+    board = setup_board()
     draw_board(board)
 
-    screen.onkey(lambda: move("u"), "Up")
-    screen.onkey(lambda: move("d"), "Down")
-    screen.onkey(lambda: move("l"), "Left")
-    screen.onkey(lambda: move("r"), "Right")
+    screen.onkey(lambda: move("u", board), "Up")
+    screen.onkey(lambda: move("d", board), "Down")
+    screen.onkey(lambda: move("l", board), "Left")
+    screen.onkey(lambda: move("r", board), "Right")
 
     screen.listen()
     screen.mainloop()
