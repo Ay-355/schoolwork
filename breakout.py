@@ -13,11 +13,9 @@ def move(direction: str, paddle: turtle.Turtle, screen: turtle.Screen):
 
 
 def check_collision(ball: turtle.Turtle, paddle: turtle.Turtle):
-    if ball.ycor() < 0.3 and ball.xcor() > paddle.xcor() - 0.5 and ball.xcor() < paddle.xcor() + 0.5:
+    if ball.ycor() < 0.3 and ball.xcor() > paddle.xcor() - 0.65 and ball.xcor() < paddle.xcor() + 0.55:
         ball.dy *= -1
-        print("collision")
-    elif ball.ycor() < -0.2:
-        print("END")
+    if ball.ycor() < -0.2:
         ball.goto(5, 5)
         time.sleep(1)
 
@@ -59,8 +57,8 @@ def main():
     ball.shape("circle")
     ball.color("red")
     ball.up()
-    ball.dx = 0.004
-    ball.dy = 0.004
+    ball.dx = random.choice([0.005, 0.004, -0.005, -0.004])
+    ball.dy = random.choice([0.005, 0.004, -0.005, -0.004])
 
     box = turtle.Turtle(visible=False)
     box.speed(0)
@@ -74,10 +72,11 @@ def main():
             box.goto(x + 0.45, y)
             box.stamp()
 
-    screen.onkey(lambda: move("left", paddle, screen), "Left")
-    screen.onkey(lambda: move("right", paddle, screen), "Right")
+    screen.onkeypress(lambda: move("left", paddle, screen), "Left")
+    screen.onkeypress(lambda: move("right", paddle, screen), "Right")
     screen.onclick(lambda x, y: print(x, y))
     screen.tracer(0)
+
     move_ball(ball, screen, paddle)
 
     screen.listen()
