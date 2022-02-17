@@ -4,7 +4,7 @@ import time
 
 
 def move(direction: str, paddle: turtle.Turtle, screen: turtle.Screen):
-    if paddle.xcor() > 9 and direction == "right":
+    if paddle.xcor() > 7 and direction == "right":
         return
     elif paddle.xcor() < 1 and direction == "left":
         return
@@ -14,46 +14,55 @@ def move(direction: str, paddle: turtle.Turtle, screen: turtle.Screen):
 
 def check_collision(ball: turtle.Turtle, paddle: turtle.Turtle, boxes: list, box: turtle.Turtle):
     # ball and paddle
-    if ball.ycor() < 0.3 and ball.xcor() > paddle.xcor() - 0.65 and ball.xcor() < paddle.xcor() + 0.55:
+    if ball.ycor() < 0.2 and ball.xcor() > paddle.xcor() - 0.65 and ball.xcor() < paddle.xcor() + 0.55:
         ball.dy *= -1
-    if ball.ycor() < -0.2:
-        ball.goto(5, 5)
+    # ball does not hit paddle
+    if ball.ycor() < -0.15:
+        ball.goto(4, 3)
         time.sleep(1)
 
-    m = {11.5: 0, 11: 1, 10.5: 2}
-    if ball.ycor() > 10.3:
-        # if (b := boxes[int(ball.ycor() - 11.5)][int(ball.xcor() - 0.45)]) != "done":
-        if (b := boxes[m[round(ball.ycor() * 2)/2]][int(ball.xcor() - 0.45)]) != "done":
+    # ball hits brick
+    m = {5.7: 0, 5.4: 1, 5.1: 2}
+    # if (y := round(ball.ycor(), 1) - 0.2) in m.keys():
+    if (y := round(ball.ycor(), 1)) in m.keys() and 0.5 < ball.xcor() < 7.49:
+        rx = round(ball.xcor())
+        if (b := boxes[m[y]][rx - 1]) != "done":
             box.clearstamp(b)
-            boxes[m[round(ball.ycor() * 2)/2]][int(ball.xcor() - 0.45)] = "done"
+            boxes[m[y]][rx - 1] = "done"
             ball.dy *= -1
- 
+
 
 def move_ball(ball: turtle.Turtle, screen: turtle.Screen, paddle: turtle.Turtle, boxes: list, box: turtle.Turtle):
     ball.setx(ball.xcor() + ball.dx)
     ball.sety(ball.ycor() + ball.dy)
     # Bounce sides 
-    if ball.xcor() > 9.9 or ball.xcor() < 0:
+    if ball.xcor() > 7.9 or ball.xcor() < 0:
         ball.dx *= -1
     # Bounce top 
-    if ball.ycor() > 11.7:
+    if ball.ycor() > 5.9:
         ball.dy *= -1
     screen.update()
+    # if all(i == "done" for row in boxes for i in row):
+    #     print("game over")
+    #     return
+    # else:
     check_collision(ball, paddle, boxes, box)
     screen.ontimer(lambda: move_ball(ball, screen, paddle, boxes, box), 1)
 
 
 def main():
     screen = turtle.Screen()
-    screen.setup(900, 700)
-    screen.setworldcoordinates(0, 0, 10, 12)
+    # screen.setup(1000, 800)
+    # screen.setworldcoordinates(0, 0, 10, 8)
+    screen.setup(800, 600)
+    screen.setworldcoordinates(0, 0, 8, 6)
     screen.title("Breakout")
     screen.bgcolor("#000000")
 
     boxes = []
 
     paddle = turtle.Turtle()
-    paddle.goto(5, 0)
+    paddle.goto(4, 0)
     paddle.speed(0)
     paddle.shape("square")
     paddle.color("grey")
@@ -61,7 +70,7 @@ def main():
     paddle.up()
 
     ball = turtle.Turtle()
-    ball.goto(5, 5)
+    ball.goto(4, 3)
     ball.speed(0)
     ball.shape("circle")
     ball.color("red")
@@ -75,13 +84,13 @@ def main():
     box.up()
     box.shapesize(1, 4)
 
-    for i, y in enumerate([11.5, 11, 10.5]):
+    for i, y in enumerate([5.8, 5.5, 5.2]):
         boxes.append([])
-        for x in range(10):
+        # 1-7 
+        for x in range(7):
             box.color(random.choice(["blue", "green", "yellow"]))
-            box.goto(x + 0.45, y)
+            box.goto(x + 1, y)
             boxes[i].append(box.stamp())
-
 
     screen.onkeypress(lambda: move("left", paddle, screen), "Left")
     screen.onkeypress(lambda: move("right", paddle, screen), "Right")
