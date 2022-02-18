@@ -13,17 +13,17 @@ def move(direction: str, paddle: turtle.Turtle, screen: turtle.Screen):
 
 
 def check_collision(ball: turtle.Turtle, paddle: turtle.Turtle, boxes: list, box: turtle.Turtle):
-    # ball and paddle
+    # ball and paddle 
     if ball.ycor() < 0.2 and ball.xcor() > paddle.xcor() - 0.65 and ball.xcor() < paddle.xcor() + 0.55:
         ball.dy *= -1
-    # ball does not hit paddle
+    # ball does not hit paddle 
     if ball.ycor() < -0.15:
         ball.goto(4, 3)
         time.sleep(1)
 
     # ball hits brick
     m = {5.7: 0, 5.4: 1, 5.1: 2}
-    # if (y := round(ball.ycor(), 1) - 0.2) in m.keys():
+    # if want to double check top -   if (y := round(ball.ycor(), 1) - 0.2) in m.keys():
     if (y := round(ball.ycor(), 1)) in m.keys() and 0.5 < ball.xcor() < 7.49:
         rx = round(ball.xcor())
         if (b := boxes[m[y]][rx - 1]) != "done":
@@ -42,18 +42,16 @@ def move_ball(ball: turtle.Turtle, screen: turtle.Screen, paddle: turtle.Turtle,
     if ball.ycor() > 5.9:
         ball.dy *= -1
     screen.update()
-    # if all(i == "done" for row in boxes for i in row):
-    #     print("game over")
-    #     return
-    # else:
     check_collision(ball, paddle, boxes, box)
-    screen.ontimer(lambda: move_ball(ball, screen, paddle, boxes, box), 1)
+    if all(i == "done" for row in boxes for i in row):
+        print("game over")
+        return
+    else:
+        screen.ontimer(lambda: move_ball(ball, screen, paddle, boxes, box), 1)
 
 
 def main():
     screen = turtle.Screen()
-    # screen.setup(1000, 800)
-    # screen.setworldcoordinates(0, 0, 10, 8)
     screen.setup(800, 600)
     screen.setworldcoordinates(0, 0, 8, 6)
     screen.title("Breakout")
