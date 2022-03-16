@@ -1,5 +1,5 @@
-import turtle
 import random
+import turtle
 
 
 def draw_board(board: list):

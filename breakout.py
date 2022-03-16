@@ -1,6 +1,6 @@
-import turtle
 import random
 import time
+import turtle
 
 
 def move(direction: str, paddle: turtle.Turtle, screen: turtle.Screen):
@@ -12,7 +12,7 @@ def move(direction: str, paddle: turtle.Turtle, screen: turtle.Screen):
     screen.update()
 
 
-def check_collision(ball: turtle.Turtle, paddle: turtle.Turtle, boxes: list, box: turtle.Turtle, missed: int):
+def check_collision(ball: turtle.Turtle, paddle: turtle.Turtle, boxes: list, box: turtle.Turtle, missed: int) -> int:
     # ball and paddle
     # sometimes the math if off and the ball gets "stuck" in the paddle
     # i'm leaving it because the game is hard to finish, and you can use it getting stuck to control the ball
@@ -77,8 +77,6 @@ def main():
     screen.title("Breakout")
     screen.bgcolor("#000000")
 
-    boxes = []
-
     paddle = turtle.Turtle()
     paddle.goto(4, 0)
     paddle.speed(0)
@@ -102,6 +100,7 @@ def main():
     box.up()
     box.shapesize(1, 4)
 
+    boxes = []
     for i, y in enumerate([5.8, 5.5, 5.2]):
         boxes.append([])
         for x in range(7):
@@ -111,7 +110,6 @@ def main():
 
     screen.onkeypress(lambda: move("left", paddle, screen), "Left")
     screen.onkeypress(lambda: move("right", paddle, screen), "Right")
-    screen.onclick(print)
     screen.tracer(0)
 
     move_ball(ball, screen, paddle, boxes, box, time.perf_counter(), 0)

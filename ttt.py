@@ -1,5 +1,5 @@
-import turtle
 import json
+import turtle
 from math import inf
 from pathlib import Path
 
