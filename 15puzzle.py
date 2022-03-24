@@ -22,43 +22,56 @@ def draw_board(screen: turtle.Screen):
     screen.update()
 
 
-def draw_numbers(pointer: turtle.Turtle, board: list):
+def draw_numbers(pointer: turtle.Turtle, board: list, screen: turtle.Screen):
+    pointer.up()
     pointer.clear()
     for i in range(4):
         for j in range(4):
-            pointer.up()
             pointer.goto(i + 0.5, j + 0.32)
-            pointer.down()
             cur = board[::-1][j][i]
             if cur != 0:
                 pointer.write(cur, align="center", font=("Arial", 34, "normal"))
+    screen.update()
+
+# def move(board: list, direction: str, text: turtle.Turtle):
+#     for i in range(4):
+#         for j in range(4):
+#             if board[j][i] == 0:
+#                 empty = (i, j)
+#     if direction == "u": swap(board, empty, empty[1] - 1, empty[0])
+#     if direction == "d": swap(board, empty, empty[1] + 1, empty[0])
+#     if direction == "l": swap(board, empty, empty[1], empty[0] - 1)
+#     if direction == "r": swap(board, empty, empty[1], empty[0] + 1)
+#
+#     draw_numbers(text, board)
+#     if board == [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]:
+#         print("done")
 
 
-def swap(board: list, empty: tuple, spot_y: int, spot_x: int):
-    # need to check edges
-    ok = True
-    if ok:
-        board[empty[1]][empty[0]], board[spot_y][spot_x] = board[spot_y][spot_x], board[empty[1]][empty[0]]
+def move_click(x: float, y: float, board: list, text: turtle.Turtle, screen: turtle.Screen):
+    ix, iy = None, None
+    for i in range(4):
+        if 0+i <= x < 1+i:
+            ix = i
+    for i in range(4):
+        if 0+i <= y < 1+i:
+            iy = i
+    if any(i is None for i in [ix, iy]):
+        return
+    iy = [3, 2, 1, 0].index(iy)
 
-
-def move(board: list, direction: str, text: turtle.Turtle):
     for i in range(4):
         for j in range(4):
             if board[j][i] == 0:
-                empty = (i, j)
-    if direction == "u": swap(board, empty, empty[1] - 1, empty[0])
-    if direction == "d": swap(board, empty, empty[1] + 1, empty[0])
-    if direction == "l": swap(board, empty, empty[1], empty[0] - 1)
-    if direction == "r": swap(board, empty, empty[1], empty[0] + 1)
+                ex, ey = i, j
 
-    draw_numbers(text, board)
+    def swap():
+        board[ey][ex], board[iy][ix] = board[iy][ix], 0
+
+    swap()
+    draw_numbers(text, board, screen)
     if board == [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]:
         print("done")
-
-
-def move_click(x, y):
-    ix = round(x) - 1
-    iy = round(y) - 1
 
 
 def main():
@@ -78,14 +91,9 @@ def main():
     random.shuffle(board)
     board = [board[i : i + 4] for i in range(0, len(board), 4)]
     draw_board(screen)
-    draw_numbers(text, board)
+    draw_numbers(text, board, screen)
 
-    screen.onkey(lambda: move(board, "u", text), "Up")
-    screen.onkey(lambda: move(board, "d", text), "Down")
-    screen.onkey(lambda: move(board, "l", text), "Left")
-    screen.onkey(lambda: move(board, "r", text), "Right")
-    screen.onclick(lambda x, y: move_click(x, y))
-    screen.onclick(print)
+    screen.onclick(lambda x, y: move_click(x, y, board, text, screen))
     screen.listen()
     screen.mainloop()
 
