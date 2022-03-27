@@ -36,3 +36,9 @@ Keybinds:
 <kbd>n</kbd> -> New game.  
 <kbd>s</kbd> -> Save game state.  
 <kbd>o</kbd> -> Open and load saved game.  
+
+
+### [Breakout](breakout.py)
+Classic breakout game remake using the turtle library.
+
+Move using the left and right arrow keys, and try to break all the blocks at the top.
