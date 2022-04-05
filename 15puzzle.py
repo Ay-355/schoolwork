@@ -2,7 +2,7 @@ import random
 import turtle
 
 
-def draw_board(screen: turtle.Screen):
+def draw_board():
     pointer = turtle.Turtle(visible=False)
     pointer.speed(0)
     pointer.color("#425CCD")
@@ -19,42 +19,34 @@ def draw_board(screen: turtle.Screen):
     pointer.left(90)
     for i in range(1, 4):
         line(i, -0.04)
-    screen.update()
 
 
-def draw_numbers(pointer: turtle.Turtle, board: list, screen: turtle.Screen):
-    pointer.up()
+def draw_numbers(pointer: turtle.Turtle, board: list, screen: turtle.Screen, final: list, turns: list):
     pointer.clear()
-    for i in range(4):
-        for j in range(4):
-            pointer.goto(i + 0.5, j + 0.32)
-            cur = board[::-1][j][i]
+    for x in range(4):
+        for y in range(4):
+            pointer.goto(x + 0.5, y + 0.32)
+            cur = board[::-1][y][x]
             if cur != 0:
                 pointer.write(cur, align="center", font=("Arial", 34, "normal"))
     screen.update()
 
-# def move(board: list, direction: str, text: turtle.Turtle):
-#     for i in range(4):
-#         for j in range(4):
-#             if board[j][i] == 0:
-#                 empty = (i, j)
-#     if direction == "u": swap(board, empty, empty[1] - 1, empty[0])
-#     if direction == "d": swap(board, empty, empty[1] + 1, empty[0])
-#     if direction == "l": swap(board, empty, empty[1], empty[0] - 1)
-#     if direction == "r": swap(board, empty, empty[1], empty[0] + 1)
-#
-#     draw_numbers(text, board)
-#     if board == [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]:
-#         print("done")
+    if board == final:
+        pointer.goto(2, 2)
+        pointer.color("white")
+        pointer.write(f"You got it! Took you {turns[0]} turns.", align="center", font=("Arial", 29, "bold"))
 
 
-def move_click(x: float, y: float, board: list, text: turtle.Turtle, screen: turtle.Screen):
+def move_click(x: float, y: float, board: list, text: turtle.Turtle, screen: turtle.Screen, final: list, turns: list):
+    if board == final:
+        return
+
     ix, iy = None, None
     for i in range(4):
-        if 0+i <= x < 1+i:
+        if 0 + i <= x < 1 + i:
             ix = i
     for i in range(4):
-        if 0+i <= y < 1+i:
+        if 0 + i <= y < 1 + i:
             iy = i
     if any(i is None for i in [ix, iy]):
         return
@@ -65,13 +57,11 @@ def move_click(x: float, y: float, board: list, text: turtle.Turtle, screen: tur
             if board[j][i] == 0:
                 ex, ey = i, j
 
-    def swap():
+    if ((ey + 1 == iy or ey - 1 == iy) and ex == ix) or ((ex + 1 == ix or ex - 1 == ix) and ey == iy):
         board[ey][ex], board[iy][ix] = board[iy][ix], 0
+        turns[0] += 1
 
-    swap()
-    draw_numbers(text, board, screen)
-    if board == [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]:
-        print("done")
+    draw_numbers(text, board, screen, final, turns)
 
 
 def main():
@@ -85,15 +75,18 @@ def main():
     text = turtle.Turtle(visible=False)
     text.speed(0)
     text.color("#425CCD")
+    text.up()
 
+    turns = [0]
     final_board = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]
     board = [i for j in final_board for i in j]
     random.shuffle(board)
-    board = [board[i : i + 4] for i in range(0, len(board), 4)]
-    draw_board(screen)
-    draw_numbers(text, board, screen)
+    board = [board[i:i + 4] for i in range(0, len(board), 4)]
 
-    screen.onclick(lambda x, y: move_click(x, y, board, text, screen))
+    draw_board()
+    draw_numbers(text, board, screen, final_board, turns)
+
+    screen.onclick(lambda x, y: move_click(x, y, board, text, screen, final_board, turns))
     screen.listen()
     screen.mainloop()
 
