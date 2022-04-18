@@ -34,7 +34,7 @@ def draw_numbers(pointer: turtle.Turtle, board: list, screen: turtle.Screen, fin
     if board == final:
         pointer.goto(2, 2)
         pointer.color("white")
-        pointer.write(f"You got it! Took you {turns[0]} turns.", align="center", font=("Arial", 29, "bold"))
+        pointer.write(f"You got it! Took you {turns[0]} turns.", align="center", font=("Arial", 28, "bold"))
 
 
 def move_click(x: float, y: float, board: list, text: turtle.Turtle, screen: turtle.Screen, final: list, turns: list):
@@ -64,6 +64,30 @@ def move_click(x: float, y: float, board: list, text: turtle.Turtle, screen: tur
     draw_numbers(text, board, screen, final, turns)
 
 
+def get_inverse_count(board: list):
+    board = [i for j in board for i in j if i != 0]
+    inverse_count = 0
+    for i in range(15):
+        for j in range(i + 1, 15):
+            if board[i] > board[j]:
+                inverse_count += 1
+    return inverse_count
+
+
+def is_solvable(board: list):
+    inverse_count = get_inverse_count(board)
+
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] == 0:
+                pos = 4 - i
+
+    def is_even(num: int):
+        return num % 2 == 0
+
+    return (is_even(pos) and not is_even(inverse_count)) or (is_even(inverse_count) and not is_even(pos))
+
+
 def main():
     screen = turtle.Screen()
     screen.setup(600, 600)
@@ -79,9 +103,12 @@ def main():
 
     turns = [0]
     final_board = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 0]]
-    board = [i for j in final_board for i in j]
-    random.shuffle(board)
-    board = [board[i:i + 4] for i in range(0, len(board), 4)]
+    while True:
+        board = [i for j in final_board for i in j]
+        random.shuffle(board)
+        board = [board[i:i + 4] for i in range(0, len(board), 4)]
+        if is_solvable(board):
+            break
 
     draw_board()
     draw_numbers(text, board, screen, final_board, turns)
