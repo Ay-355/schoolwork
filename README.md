@@ -42,3 +42,9 @@ Keybinds:
 Classic breakout game remake using the turtle library.
 
 Move using the left and right arrow keys, and try to break all the blocks at the top.
+
+
+### [15 Puzzle](15puzzle.py)
+15 puzzle sliding game where you try to get the numbers in order
+
+Click on the piece you want to move to move it into the empty piece.
